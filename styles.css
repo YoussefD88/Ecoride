@@ -1,3 +1,15 @@
-h1 {
-    color: blue;
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    color: #2e7d32;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.card.eco {
+    border-left: 5px solid #4caf50;
 }
