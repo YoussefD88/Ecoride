@@ -1,0 +1,88 @@
+// script.js (ajouté : fonction de connexion, inscription, réservation, déconnexion)
+
+function validerCreationCompte() {
+  const pseudo = document.getElementById("pseudo").value;
+  const email = document.getElementById("email").value;
+  const mdp = document.getElementById("mdp").value;
+  const confirm = document.getElementById("confirm").value;
+  const message = document.getElementById("message-erreur");
+
+  if (!pseudo || !email || !mdp || !confirm) {
+    message.textContent = "Tous les champs sont obligatoires.";
+    return false;
+  }
+  if (mdp !== confirm) {
+    message.textContent = "Les mots de passe ne correspondent pas.";
+    return false;
+  }
+  if (mdp.length < 6 || !/[A-Z]/.test(mdp) || !/\d/.test(mdp)) {
+    message.textContent = "Mot de passe trop faible (min. 6 caractères, 1 majuscule, 1 chiffre).";
+    return false;
+  }
+
+  const user = { pseudo, email, mdp, credits: 20, role: "passager" };
+  localStorage.setItem("user", JSON.stringify(user));
+  alert("Compte créé avec succès ! Vous avez 20 crédits.");
+  window.location.href = "index.html";
+  return false;
+}
+
+function connexionUtilisateur() {
+  const email = document.getElementById("emailConnexion").value;
+  const mdp = document.getElementById("mdpConnexion").value;
+  const message = document.getElementById("message-connexion");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user || user.email !== email || user.mdp !== mdp) {
+    message.textContent = "Email ou mot de passe incorrect.";
+    return false;
+  }
+
+  alert("Connexion réussie. Bienvenue " + user.pseudo + " !");
+  window.location.href = "index.html";
+  return false;
+}
+
+function estConnecte() {
+  return localStorage.getItem("user") !== null;
+}
+
+function utilisateurCourant() {
+  return JSON.parse(localStorage.getItem("user"));
+}
+
+function participerAuTrajet() {
+  const user = utilisateurCourant();
+  if (!user) {
+    alert("Veuillez vous connecter ou créer un compte pour participer.");
+    window.location.href = "connexion.html";
+    return;
+  }
+
+  const placesDispo = 1;
+  const prixCredits = 5;
+
+  if (user.credits < prixCredits) {
+    alert("Crédits insuffisants. Veuillez recharger votre compte.");
+    return;
+  }
+
+  if (placesDispo < 1) {
+    alert("Désolé, plus de place disponible.");
+    return;
+  }
+
+  if (!confirm(`Participer à ce trajet contre ${prixCredits} crédits ?`)) return;
+  if (!confirm("Confirmez définitivement votre réservation.")) return;
+
+  user.credits -= prixCredits;
+  localStorage.setItem("user", JSON.stringify(user));
+  alert("Réservation confirmée. Il vous reste " + user.credits + " crédits.");
+  // TODO : mise à jour backend des places restantes et historique passager
+}
+
+function deconnexion() {
+  localStorage.removeItem("user");
+  alert("Déconnexion réussie.");
+  window.location.href = "index.html";
+}

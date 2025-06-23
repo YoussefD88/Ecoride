@@ -1,65 +1,35 @@
-// Exemple de données statiques pour les tests
-const covoiturages = [
-    {
-        pseudo: "Alex",
-        photo: "https://via.placeholder.com/80",
-        note: 4.8,
-        places: 2,
-        prix: 15,
-        date: "2025-06-21",
-        heureDepart: "08:00",
-        heureArrivee: "10:30",
-        electrique: true
-    },
-    {
-        pseudo: "Marie",
-        photo: "https://via.placeholder.com/80",
-        note: 4.5,
-        places: 0, // Non affiché
-        prix: 10,
-        date: "2025-06-21",
-        heureDepart: "09:00",
-        heureArrivee: "11:00",
-        electrique: false
-    }
-];
+document.getElementById("search-form").addEventListener("submit", function(event) {
+  event.preventDefault();
 
-document.getElementById('search-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const date = document.getElementById('date').value;
-    const results = document.getElementById('results');
-    results.innerHTML = '';
+  const depart = document.getElementById("ville-depart").value.trim();
+  const arrivee = document.getElementById("ville-arrivee").value.trim();
+  const date = document.getElementById("date-trajet").value;
 
-    const filtered = covoiturages.filter(trajet => trajet.date === date && trajet.places > 0);
+  if (depart && arrivee && date) {
+    // Simule une redirection avec des paramètres de recherche (à remplacer par un vrai backend)
+    window.location.href = `covoiturages.html?depart=${encodeURIComponent(depart)}&arrivee=${encodeURIComponent(arrivee)}&date=${encodeURIComponent(date)}`;
+  }
+});
 
-    if (filtered.length === 0) {
-        const alternative = covoiturages.find(t => t.places > 0);
-        if (alternative) {
-            results.innerHTML = `<p>Aucun trajet à cette date. Prochain disponible : ${alternative.date}</p>`;
-        } else {
-            results.innerHTML = `<p>Aucun covoiturage disponible actuellement.</p>`;
-        }
-        return;
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  const formConnexion = document.getElementById("formConnexion");
+  if (formConnexion) {
+    formConnexion.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-    filtered.forEach(trajet => {
-        const card = document.createElement('div');
-        card.className = `col-md-6 card p-3 ${trajet.electrique ? 'eco' : ''}`;
-        card.innerHTML = `
-            <div class="d-flex align-items-center mb-2">
-                <img src="${trajet.photo}" class="rounded-circle me-3" width="60" height="60">
-                <div>
-                    <strong>${trajet.pseudo}</strong><br>
-                    Note : ${trajet.note}/5
-                </div>
-            </div>
-            <p><strong>Places restantes :</strong> ${trajet.places}</p>
-            <p><strong>Prix :</strong> ${trajet.prix}€</p>
-            <p><strong>Départ :</strong> ${trajet.date} à ${trajet.heureDepart}</p>
-            <p><strong>Arrivée :</strong> ${trajet.heureArrivee}</p>
-            <p><strong>${trajet.electrique ? 'Voyage écologique 🚗⚡' : 'Voyage non écologique'}</strong></p>
-            <button class="btn btn-outline-success">Détail</button>
-        `;
-        results.appendChild(card);
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const utilisateur = JSON.parse(localStorage.getItem("utilisateur"));
+
+      const messageEl = document.getElementById("message");
+
+      if (utilisateur && utilisateur.email === email && utilisateur.password === password) {
+        localStorage.setItem("connecte", "true");
+        window.location.href = "index.html";
+      } else {
+        messageEl.textContent = "Identifiants incorrects.";
+      }
     });
+  }
 });
